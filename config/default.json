@@ -2,5 +2,32 @@
 	"app": {
 		"name": "Digital Tanglible Trust Feed"
 	},
+	"sources": {
+		"goldfeed": {
+			"url": "https://gold-feed.com/paid/d7d6s6d66k4j4658e6d6cds638940e/all_metals_json_usd.php",
+			"interval": 60000,
+			"active": false
+		},
+		"bitstamp": {
+			"url": "https://www.bitstamp.net/api/ticker/",
+			"interval": 60000,
+			"active": false
+		},
+		"bitfinex": {
+			"url": "https://api.bitfinex.com/v1/pubticker/btcusd",
+			"interval": 60000,
+			"active": true
+		},
+		"btce": {
+			"url": "https://btc-e.com/api/2/btc_usd/ticker",
+			"interval": 60000,
+			"active": true
+		},
+		"lakebtc": {
+			"url": "https://www.lakebtc.com/api_v1/ticker",
+			"interval": 60000,
+			"active": false
+		}
+	},
 	"port": 9091
 }
