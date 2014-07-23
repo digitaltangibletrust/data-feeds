@@ -1,0 +1,27 @@
+{
+  "name": "data-feeds",
+  "version": "0.0.0",
+  "description": "data-feeds ==========",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/digitaltangibletrust/data-feeds.git"
+  },
+  "author": "Digital Tanglible Trust Team",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/digitaltangibletrust/data-feeds/issues"
+  },
+  "homepage": "https://github.com/digitaltangibletrust/data-feeds",
+  "dependencies": {
+    "async": "~0.9.0",
+    "lodash": "~2.4.1",
+    "request": "~2.38.0",
+    "restify": "~2.8.1",
+    "config": "~1.0.0",
+    "gauss": "~0.2.12"
+  }
+}
