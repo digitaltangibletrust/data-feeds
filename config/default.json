@@ -6,12 +6,12 @@
 		"goldfeed": {
 			"url": "https://gold-feed.com/paid/d7d6s6d66k4j4658e6d6cds638940e/all_metals_json_usd.php",
 			"interval": 60000,
-			"active": false
+			"active": true
 		},
 		"bitstamp": {
 			"url": "https://www.bitstamp.net/api/ticker/",
 			"interval": 60000,
-			"active": false
+			"active": true
 		},
 		"bitfinex": {
 			"url": "https://api.bitfinex.com/v1/pubticker/btcusd",
@@ -26,7 +26,7 @@
 		"lakebtc": {
 			"url": "https://www.lakebtc.com/api_v1/ticker",
 			"interval": 60000,
-			"active": false
+			"active": true
 		}
 	},
 	"port": 9091
