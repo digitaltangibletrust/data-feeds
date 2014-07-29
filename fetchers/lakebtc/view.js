@@ -5,7 +5,7 @@ module.exports = function (resultBus, obj) {
   for (var currency in obj) {
     resultBus.emit("result", {
       "source": name,
-      "rateFor": currency + " to " + currencyOne,
+      "token": currency + "to" + currencyOne,
       "bid": parseFloat(obj[currency].bid),
       "ask": parseFloat(obj[currency].ask),
       "low": parseFloat(obj[currency].low),

@@ -22,7 +22,7 @@ module.exports = function (resultBus, obj) {
   metals.forEach(function (metal) {
     var result = {
       "source": name,
-      "rateFor": metal.toUpperCase() + " to " + currencyTwo,
+      "token": metal.toUpperCase() + "to" + currencyTwo,
       "bid": parseFloat(obj[metal + "_" + tails.bid] || 0),
       "ask": parseFloat(obj[metal + "_" + tails.ask] || 0),
       "low": parseFloat(obj[metal + "_" + tails.low] || 0),

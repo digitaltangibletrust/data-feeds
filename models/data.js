@@ -5,7 +5,7 @@ module.exports = function (sequelize, DataTypes) {
       "type": DataTypes.STRING,
       "allowNull": false
     },
-    "rateFor": {
+    "token": {
       "type": DataTypes.STRING,
       "allowNull": false
     },

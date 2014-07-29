@@ -4,7 +4,7 @@ var currencyTwo = "USD";
 module.exports = function (resultBus, obj) {
   var result = {
     "source": name,
-    "rateFor": currencyTwo + " to " + currencyOne,
+    "token": currencyTwo + "to" + currencyOne,
     "bid": parseFloat(obj.bid),
     "ask": parseFloat(obj.ask),
     "low": parseFloat(obj.low),
