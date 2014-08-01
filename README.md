@@ -1,6 +1,10 @@
 data-feeds
 ==========
 
+#Installation
+requirements: node.js, postgresql
+* run `SYNC_DB=true node feeds.js` for recreating db structure(warning: all data will be lost)
+* run `CREATE_VIEWS=true node feeds.js` for creating aggregating views for data
 
 ##API
 Optional params(for each route):
