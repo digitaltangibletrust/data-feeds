@@ -45,6 +45,12 @@
 			"url": "https://www.lakebtc.com/api_v1/ticker",
 			"interval": 60000,
 			"active": true
+		},
+		"poloniex": {
+			"tickerUrl": "https://poloniex.com/public?command=returnTicker",
+			"detailUrl": " https://poloniex.com/public?command=returnChartData&",
+			"interval": 60000,
+			"active": true
 		}
 	},
 	"port": 9091
