@@ -46,6 +46,13 @@ response:
 }]
 
 ```
+
+```
+GET /latest?token=:token
+```
+Gets latest prices on token
+
+
 ```
 GET /tokens
 ```
