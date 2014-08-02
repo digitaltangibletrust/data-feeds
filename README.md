@@ -7,14 +7,21 @@ requirements: node.js, postgresql
 * run `CREATE_VIEWS=true node feeds.js` for creating aggregating views for data
 
 ##API
-Optional params(for each route):
-* interval: may be day, hour, month
-
 
 
 ```
 GET /feed
 ```
+query params:
+* ?exchange=:exchange_name
+* ?token=:token
+* ?res=:resolution may be: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d, 3d, 1w
+* ?limit=:limit
+* ?order=desc(affects only time)
+and any combination of them
+for example: if you want to get gold price for past 24h
+`/feed?token=GOLDtoUSD&res=1d&limit=1&order=desc`
+
 response:
 ```javascript
 
@@ -34,54 +41,6 @@ response:
   low: 579.6,
   high: 591.43,
   date_trunc: "2014-07-29T23:19:39.000Z"
-}]
-
-```
-```
-GET /feed/:exchange
-```
-response(/feed/bitfinex):
-```javascript
-[{
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.46,
-  ask: 584.8,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:19:20.000Z"
-}, {
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.8,
-  ask: 584.91,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:18:19.000Z"
-}]
-```
-```
-GET /feed/:exchange/:token
-```
-response(/feed/bitfinex/USDtoBTC)
-```javascript
-
-[{
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.46,
-  ask: 584.8,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:19:20.000Z"
-}, {
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.8,
-  ask: 584.91,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:18:19.000Z"
 }]
 
 ```
