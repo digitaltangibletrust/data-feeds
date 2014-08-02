@@ -18,7 +18,9 @@ query params:
 * ?res=:resolution may be: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 12h, 1d, 3d, 1w
 * ?limit=:limit
 * ?order=desc(affects only time)
+
 and any combination of them
+
 for example: if you want to get gold price for past 24h
 `/feed?token=GOLDtoUSD&res=1d&limit=1&order=desc`
 
