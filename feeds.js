@@ -1,5 +1,9 @@
 var config = require("config");
 var models = require("./models/index.js");
+
+var errbit = require("./errbit");
+errbit.handleExceptions();
+
 if (process.env.SYNC_DB) {
   return models.sequelize.sync({
     "force": true

@@ -53,5 +53,8 @@
 			"active": true
 		}
 	},
-	"port": 9091
+	"port": 9091,
+  "airbrake": {
+    "api_key": "233666b8cafacd8e32aa8a4576f4cfe0"
+  }
 }
