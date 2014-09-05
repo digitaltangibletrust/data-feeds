@@ -1,59 +1,59 @@
 {
-	"app": {
-		"name": "Digital Tanglible Trust Feed"
-	},
-	"database": {
-		"uri": "postgres://test:test@localhost/data_feeds",
-		"options": {
-			"dialect": "postgres",
-			"pool": {
-				"maxConnections": 20,
-				"maxIdleTime": 30000
-			},
-			"define": {
-				"underscored": true,
-				"syncOnAssociation": true,
-				"timestamps": true
-			},
-			"sync": {
-				"force": true
-			}
-		}
-	},
-	"sources": {
-		"goldfeed": {
-			"url": "https://gold-feed.com/paid/d7d6s6d66k4j4658e6d6cds638940e/all_metals_json_usd.php",
-			"interval": 60000,
-			"active": true
-		},
-		"bitstamp": {
-			"url": "https://www.bitstamp.net/api/ticker/",
-			"interval": 60000,
-			"active": true
-		},
-		"bitfinex": {
-			"url": "https://api.bitfinex.com/v1/pubticker/btcusd",
-			"interval": 60000,
-			"active": true
-		},
-		"btce": {
-			"url": "https://btc-e.com/api/2/btc_usd/ticker",
-			"interval": 60000,
-			"active": true
-		},
-		"lakebtc": {
-			"url": "https://www.lakebtc.com/api_v1/ticker",
-			"interval": 60000,
-			"active": true
-		},
-		"poloniex": {
-			"tickerUrl": "https://poloniex.com/public?command=returnTicker",
-			"detailUrl": " https://poloniex.com/public?command=returnChartData&",
-			"interval": 60000,
-			"active": true
-		}
-	},
-	"port": 9091,
+  "app": {
+    "name": "Digital Tanglible Trust Feed"
+  },
+  "database": {
+    "uri": "postgres://test:test@localhost/data_feeds",
+    "options": {
+      "dialect": "postgres",
+      "pool": {
+        "maxConnections": 20,
+        "maxIdleTime": 30000
+      },
+      "define": {
+        "underscored": true,
+        "syncOnAssociation": true,
+        "timestamps": true
+      },
+      "sync": {
+        "force": true
+      }
+    }
+  },
+  "sources": {
+    "goldfeed": {
+      "url": "https://gold-feed.com/paid/d7d6s6d66k4j4658e6d6cds638940e/all_metals_json_usd.php",
+      "interval": 60000,
+      "active": true
+    },
+    "bitstamp": {
+      "url": "https://www.bitstamp.net/api/ticker/",
+      "interval": 60000,
+      "active": true
+    },
+    "bitfinex": {
+      "url": "https://api.bitfinex.com/v1/pubticker/btcusd",
+      "interval": 60000,
+      "active": true
+    },
+    "btce": {
+      "url": "https://btc-e.com/api/2/btc_usd/ticker",
+      "interval": 60000,
+      "active": true
+    },
+    "lakebtc": {
+      "url": "https://www.lakebtc.com/api_v1/ticker",
+      "interval": 60000,
+      "active": true
+    },
+    "poloniex": {
+      "tickerUrl": "https://poloniex.com/public?command=returnTicker",
+      "detailUrl": " https://poloniex.com/public?command=returnChartData&",
+      "interval": 60000,
+      "active": true
+    }
+  },
+  "port": 9091,
   "airbrake": {
     "api_key": "233666b8cafacd8e32aa8a4576f4cfe0"
   }
