@@ -33,10 +33,10 @@ res.on("result", function (result) {
         result.token.substring( 0, 3 ) !== 'BTC' ) {
 
       models.data.getLatestPrices("USDtoBTC").complete(function (err, data) {
-        var btcPrice = data[0].ask + data[0].bid / 2.0;
         if (err) {
           console.dir(err);
         } else {
+          var btcPrice = data[0].ask + data[0].bid / 2.0;
           var convertedData = {
             "source": result.source,
             "token": result.token.substring( 0, result.token.length - 3 ) + 'BTC',
