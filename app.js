@@ -21,31 +21,24 @@ server.use(restify.throttle({
     }
   }
 }));
+var availableIntervals = ["day", "hour", "month"];
+var defaultInterval = "hour";
 
+function validateInterval(interval) {
+  if (!interval) {
+    return defaultInterval;
+  }
+  if (availableIntervals.indexOf(interval) === -1) {
+    return defaultInterval;
+  }
+  return interval;
+}
 server.get("/feed", function (req, res, next) {
-  var resolutions = models.data.getResolution();
-
-  var params = {
-    "resolution": resolutions["1m"]
-  };
-  if (req.params.res) {
-    if (resolutions[req.params.res]) {
-      params.resolution = resolutions[req.params.res];
-    }
-  }
-  if (req.params.limit) {
-    params.limit = req.params.limit;
-  }
-  if (req.params.exchange) {
-    params.exchange = req.params.exchange;
-  }
-  if (req.params.order) {
-    params.order = req.params.order;
-  }
-  if (req.params.token) {
-    params.token = req.params.token;
-  }
-  models.data.getData(params).complete(function (err, data) {
+  var interval = validateInterval(req.params.interval);
+  var params = ["1 " + interval];
+  models.sequelize.query("SELECT source as exchange, token, bid, ask, low, high, date_trunc('second', created_at) FROM data WHERE created_at > (NOW() - ?::interval) ORDER BY id DESC", null, {
+    "raw": true
+  }, params).complete(function (err, data) {
     if (err) {
       return next(err);
     }
@@ -53,9 +46,25 @@ server.get("/feed", function (req, res, next) {
     next();
   });
 });
-server.get("/latest", function (req, res, next) {
-  var token = req.params.token || "USDtoBTC";
-  models.data.getLatestPrices(token).complete(function (err, data) {
+server.get("/feed/:exchange", function (req, res, next) {
+  var interval = validateInterval(req.params.interval);
+  var params = [req.params.exchange, "1 " + interval];
+  models.sequelize.query("SELECT source as exchange, token, bid, ask, low, high, date_trunc('second', created_at) FROM data WHERE source=? AND created_at > (NOW() - ?::interval) ORDER BY id DESC", null, {
+    "raw": true
+  }, params).complete(function (err, data) {
+    if (err) {
+      return next(err);
+    }
+    res.send(data);
+    next();
+  });
+});
+server.get("/feed/:exchange/:token", function (req, res, next) {
+  var interval = validateInterval(req.params.interval);
+  var params = [req.params.exchange, req.params.token, "1 " + interval];
+  models.sequelize.query("SELECT source as exchange, token, bid, ask, low, high, date_trunc('second', created_at) FROM data WHERE source=? AND token= ? AND created_at > (NOW() - ?::interval) ORDER BY id DESC", null, {
+    "raw": true
+  }, params).complete(function (err, data) {
     if (err) {
       return next(err);
     }
