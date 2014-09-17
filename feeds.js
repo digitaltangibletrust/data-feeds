@@ -1,5 +1,8 @@
 var config = require("config");
 var models = require("./models/index.js");
+var redis = require('redis').createClient(config.redis.port, config.redis.host, {
+  'auth_pass': config.redis.pass || null
+});
 
 var errbit = require("./errbit");
 errbit.handleExceptions();
@@ -48,6 +51,11 @@ res.on("result", function (result) {
           models.data.create(convertedData).complete(function (err) {
             if (err) {
               console.dir(err);
+            }
+            else {
+              var channel = "Feed updated " + result.source;
+              redis.publish(channel, "");
+              console.log(channel);
             }
           });
         }
