@@ -31,6 +31,7 @@ if (process.env.CREATE_VIEWS) {
 }
 var res = require("./fetchers/index.js").spin();
 res.on("result", function (result) {
+  broadcastUpdate(result);
   if (result.bid > 0) {
     if( result.token.substring( result.token.length - 3 ) !== 'BTC' && 
         result.token.substring( 0, 3 ) !== 'BTC' ) {
@@ -53,9 +54,7 @@ res.on("result", function (result) {
               console.dir(err);
             }
             else {
-              var channel = "Feed updated " + result.source;
-              redis.publish(channel, "");
-              console.log(channel);
+              broadcastUpdate(convertedData);
             }
           });
         }
@@ -69,4 +68,10 @@ res.on("result", function (result) {
     });
   }
 });
+
+function broadcastUpdate(update) {
+  var channel = "feed." + update.source + ".updated";
+  redis.publish(channel, update.token);
+}
+
 console.log("feed is starting");
