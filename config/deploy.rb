@@ -20,11 +20,11 @@ set :default_stage, "staging"
 
 namespace :deploy do
     task :start, :roles => :app do
-        run "cd #{current_path} && pm2 startOrRestart pm2_run.json"
+        run "cd #{current_path} && NODE_ENV=#{node_env} pm2 startOrRestart pm2_run.json"
     end
 
     task :stop, :roles => :app do
-        run "cd #{current_path} && pm2 stop pm2_run.json"
+        run "cd #{current_path} && NODE_ENV=#{node_env} pm2 stop pm2_run.json"
     end
 
     task :restart, :roles => :app do
