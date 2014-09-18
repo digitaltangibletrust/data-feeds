@@ -1,5 +1,8 @@
 var config = require("config");
 var models = require("./models/index.js");
+var redis = require('redis').createClient(config.redis.port, config.redis.host, {
+  'auth_pass': config.redis.pass || null
+});
 
 var errbit = require("./errbit");
 errbit.handleExceptions();
@@ -28,6 +31,7 @@ if (process.env.CREATE_VIEWS) {
 }
 var res = require("./fetchers/index.js").spin();
 res.on("result", function (result) {
+  broadcastUpdate(result);
   if (result.bid > 0) {
     if( result.token.substring( result.token.length - 3 ) !== 'BTC' && 
         result.token.substring( 0, 3 ) !== 'BTC' ) {
@@ -49,6 +53,9 @@ res.on("result", function (result) {
             if (err) {
               console.dir(err);
             }
+            else {
+              broadcastUpdate(convertedData);
+            }
           });
         }
       });
@@ -61,4 +68,10 @@ res.on("result", function (result) {
     });
   }
 });
+
+function broadcastUpdate(update) {
+  var channel = "feed." + update.source + ".updated";
+  redis.publish(channel, update.token);
+}
+
 console.log("feed is starting");

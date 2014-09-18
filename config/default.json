@@ -62,5 +62,8 @@
   "port": 9091,
   "airbrake": {
     "api_key": "b697607fad91ee8dcc27c2b57830e247"
+  },
+  "redis": {
+    "pass": "tL5h5h6TMduB"
   }
 }
