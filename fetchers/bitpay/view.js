@@ -7,7 +7,7 @@ module.exports = function (resultBus, currencies) {
   currencies.forEach(function (currency) {
     var result = {
       "source": name,
-      "token": currency.code.toUpperCase(),
+      "token": 'BTCto' + currency.code.toUpperCase(),
       "bid": currency.rate,
       "ask": currency.rate,
       "low": currency.rate,
