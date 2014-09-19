@@ -57,6 +57,12 @@
       "interval": 60000,
       "active": true,
       "timeout": 30000
+    },
+    "bitpay": {
+      "url": "https://bitpay.com/api/rates",
+      "interval": 60000,
+      "active": true,
+      "timeout": 30000
     }
   },
   "port": 9091,

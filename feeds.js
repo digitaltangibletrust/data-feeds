@@ -61,7 +61,7 @@ res.on("result", function (result) {
       });
 
     }
-    models.data.create(result).complete(function (err) {
+    models.data.create(result).complete(function (err, res) {
       if (err) {
         console.dir(err);
       }
