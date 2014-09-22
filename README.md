@@ -12,8 +12,12 @@ requirements: node.js, postgresql
 ```
 GET /feed/<exchange>/<token>?
 ```
-/feed/goldfeed/GOLDtoBTC?interval=day
-availableIntervals = ["day", "hour", "month"];
+Example url: `/feed/goldfeed/GOLDtoBTC?interval=day`
+
+valid intervals
+  * day
+  * hour
+  * month
 
 response:
 ```javascript
