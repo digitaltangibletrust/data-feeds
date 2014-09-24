@@ -26,6 +26,7 @@
     "sequelize": "~1.7.9",
     "pg": "~3.4.0",
     "airbrake": "^0.3.8",
-    "redis": "0.11.0"
+    "redis": "0.11.0",
+    "melotic": "git+https://github.com/digitaltangibletrust/melotic.git"
   }
 }
