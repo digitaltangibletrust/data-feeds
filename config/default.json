@@ -63,6 +63,10 @@
       "interval": 60000,
       "active": true,
       "timeout": 30000
+    },
+    "melotic": {
+      "interval": 60000,
+      "active": true  
     }
   },
   "port": 9091,
