@@ -10,7 +10,7 @@ module.exports = function (params, resultBus, callback) {
   function fetch(callback) {
     melotic.getMarkets( function( err, result ) {
       if (err) {
-        if(err.code !== "ETIMEDOUT") return callback(err);
+        if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
       }
       emit( result );
       setTimeout( fetch, params.interval );

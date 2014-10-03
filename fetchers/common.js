@@ -3,7 +3,7 @@ module.exports = {
     return function(callback) {
       return function (err, response, body) {
         if (err) {
-          if(err.code !== "ETIMEDOUT") return callback(err);
+          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
         }
         else body && eventEmitter(body);
         setTimeout(callback, interval);
