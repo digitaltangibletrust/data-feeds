@@ -2,6 +2,10 @@ var restify = require("restify");
 var config = require("config");
 var server = restify.createServer(config.app);
 var models = require("./models/index.js");
+
+var errbit = require("./errbit");
+errbit.handleExceptions();
+
 server.use(restify.fullResponse());
 server.use(restify.jsonp());
 server.use(restify.gzipResponse());

@@ -2,16 +2,16 @@ var request = require("request");
 var async = require("async");
 
 module.exports = function (params, resultBus, callback) {
-  var goldfeed = request.defaults({
-    "url": params.url,
+  var poloniexTicker = request.defaults({
+    "url": params.tickerUrl,
     "json": true,
     "timeout": params.timeout
   });
 
-  var fetchCallback = require("../common").fetchCallback(resultBus.emit.bind(resultBus, "goldfeed"), params.interval);
+  var fetchCallback = require("../common").fetchCallback(resultBus.emit.bind(resultBus, "poloniex"), params.interval);
 
   function fetch(callback) {
-    goldfeed.get(null, fetchCallback(callback));
+    poloniexTicker.get(null, fetchCallback(callback));
   }
 
   async.forever(fetch, callback);

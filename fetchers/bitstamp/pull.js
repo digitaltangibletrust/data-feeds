@@ -4,17 +4,15 @@ var async = require("async");
 module.exports = function (params, resultBus, callback) {
   var bitstamp = request.defaults({
     "url": params.url,
-    "json": true
+    "json": true,
+    "timeout": params.timeout
   });
 
+  var fetchCallback = require("../common").fetchCallback(resultBus.emit.bind(resultBus, "bitstamp"), params.interval);
+
   function fetch(callback) {
-    bitstamp.get(null, function (err, response, body) {
-      if (err) {
-        return callback(err);
-      }
-      resultBus.emit("bitstamp", body);
-      setTimeout(callback, params.interval);
-    });
+    bitstamp.get(null, fetchCallback(callback));
   }
+
   async.forever(fetch, callback);
 };
