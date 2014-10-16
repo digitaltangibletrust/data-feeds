@@ -26,6 +26,12 @@
 			"interval": 60000,
 			"active": true
 		},
+    "goldfeedEUR": {
+      "url": "https://gold-feed.com/paid/d7d6s6d66k4j4658e6d6cds638940e/all_metals_json_eur.php",
+      "interval": 60000,
+      "active": true,
+      "timeout": 30000
+    },
 		"bitstamp": {
 			"url": "https://www.bitstamp.net/api/ticker/",
 			"interval": 60000,
