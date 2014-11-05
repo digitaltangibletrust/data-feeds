@@ -9,16 +9,14 @@ module.exports = function (params, rawResults, callback) {
   });
 
   function fetch(callback) {
-    btce.get(null, function(callback) {
-      return function (err, response, body) {
-        if (err) {
-          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
-        }
-        else {
-          if(body) rawResults.emit("btce", body);
-        }
-        setTimeout(callback, params.interval);
+    btce.get(null, function (err, response, body) {
+      if (err) {
+        if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
       }
+      else {
+        if(body) rawResults.emit("btce", body);
+      }
+      setTimeout(callback, params.interval);
     });
   }
 
