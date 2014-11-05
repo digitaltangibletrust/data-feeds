@@ -1,9 +1,7 @@
-var currencyOne = "BTC";
-var currencyTwo = "USD";
 module.exports = function (resultBus, source, obj) {
   var result = {
     "source": source,
-    "token": currencyTwo + "to" + currencyOne,
+    "token": "USDtoBTC",
     "bid": parseFloat(obj.ticker.sell),
     "ask": parseFloat(obj.ticker.buy),
     "low": parseFloat(obj.ticker.low),

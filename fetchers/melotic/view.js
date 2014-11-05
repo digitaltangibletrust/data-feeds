@@ -1,5 +1,3 @@
-var currencyOne = "BTC";
-
 module.exports = function (resultBus, source, obj) {
 
   // GLDPAMPBAROZ market.
