@@ -40,11 +40,11 @@ var resultBus = require("./fetchers/index.js").spin();
 resultBus.on("result", function (result) {
   if (result.bid > 0) {
     
-    save(result);
+    saveResult(result);
 
     if ( !BTCinCurrencyPair(result) ){
       convertToBTC(result, function (converted) {
-        save(converted);
+        saveResult(converted);
       });
     }
   }
@@ -55,7 +55,7 @@ function BTCinCurrencyPair(result){
   return result.token.substring( result.token.length - 3 ) === 'BTC' || result.token.substring( 0, 3 ) === 'BTC';
 }
 
-// convert to btc and thenfor non-btc endpoints
+// convert to btc
 function convertToBTC(result, cb){
   models.data.getLatestPrices("USDtoBTC").complete(function (err, data) {
     if (err) {
@@ -78,7 +78,7 @@ function convertToBTC(result, cb){
 }
 
 // write to the db and trigger redis
-function save(data){
+function saveResult(data){
   models.data.create(data).complete(function (err) {
     if (err) {
       return console.dir(err);
