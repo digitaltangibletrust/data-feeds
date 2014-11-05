@@ -19,5 +19,6 @@ module.exports = function (params, rawResults, callback) {
       setTimeout(callback, params.interval);
     });
   }
+  
   async.forever(fetch, callback);
 };
