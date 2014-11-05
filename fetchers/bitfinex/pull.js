@@ -10,12 +10,10 @@ module.exports = function (params, rawResults, callback) {
 
   function fetch(callback) {
     bitfinex.get(null, function (err, response, body) {
-      if (err) {
-        if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
-          return callback(err);
-        }
+      if (err && err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
+        return callback(err);
       }
-      else if(body) {
+      else if(!err && body) {
         rawResults.emit("bitfinex", body);
       }
       setTimeout(callback, params.interval);
