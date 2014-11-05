@@ -19,6 +19,7 @@ if (process.env.SYNC_DB) {
     process.exit(0);
   });
 }
+
 if (process.env.CREATE_VIEWS) {
   return models.sequelize.query(require("fs").readFileSync("./sql/views.sql").toString()).complete(function (err) {
     console.log("done");
@@ -29,49 +30,71 @@ if (process.env.CREATE_VIEWS) {
     process.exit(0);
   });
 }
-var res = require("./fetchers/index.js").spin();
-res.on("result", function (result) {
-  broadcastUpdate(result);
+
+///////////////
+// MAIN LOOP //
+///////////////
+
+var resultBus = require("./fetchers/index.js").spin();
+
+resultBus.on("result", function (result) {
   if (result.bid > 0) {
-    if( result.token.substring( result.token.length - 3 ) !== 'BTC' && 
-        result.token.substring( 0, 3 ) !== 'BTC' ) {
+    
+    save(result);
 
-      models.data.getLatestPrices("USDtoBTC").complete(function (err, data) {
-        if (err) {
-          console.dir(err);
-        } else {
-          var btcPrice = ( data[0].ask + data[0].bid ) / 2.0;
-          var convertedData = {
-            "source": result.source,
-            "token": result.token.substring( 0, result.token.length - 3 ) + 'BTC',
-            "bid": result.bid / btcPrice,
-            "ask": result.ask / btcPrice,
-            "low": result.low / btcPrice,
-            "high": result.high / btcPrice
-          };
-          models.data.create(convertedData).complete(function (err) {
-            if (err) {
-              console.dir(err);
-            }
-            else {
-              broadcastUpdate(convertedData);
-            }
-          });
-        }
+    if ( !BTCinCurrencyPair(result) ){
+      convertToBTC(result, function (converted) {
+        save(converted);
       });
-
     }
-    models.data.create(result).complete(function (err, res) {
-      if (err) {
-        console.dir(err);
-      }
-    });
   }
 });
 
-function broadcastUpdate(update) {
-  var channel = "feed." + update.source + ".updated";
-  redis.publish(channel, update.token);
+// is BTC one of the currencies in the token name
+function BTCinCurrencyPair(result){
+  return result.token.substring( result.token.length - 3 ) === 'BTC' || result.token.substring( 0, 3 ) === 'BTC';
+}
+
+// convert to btc and thenfor non-btc endpoints
+function convertToBTC(result, cb){
+  models.data.getLatestPrices("USDtoBTC").complete(function (err, data) {
+    if (err) {
+      return console.dir(err);
+    } 
+
+    var btcPrice = ( data[0].ask + data[0].bid ) / 2.0;
+    
+    var convertedData = {
+      "source": result.source,
+      "token": result.token.substring( 0, result.token.length - 3 ) + 'BTC',
+      "bid": result.bid / btcPrice,
+      "ask": result.ask / btcPrice,
+      "low": result.low / btcPrice,
+      "high": result.high / btcPrice
+    };
+
+    cb(convertedData);
+  });
+}
+
+// write to the db and trigger redis
+function save(data){
+  models.data.create(data).complete(function (err) {
+    if (err) {
+      return console.dir(err);
+    }
+    
+    broadcastUpdate(data);
+  });
+}
+
+///////////////////////////
+// REDIS EVENT BROADCAST //
+///////////////////////////
+
+function broadcastUpdate(result) {
+  var channel = "feed." + result.source + ".updated";
+  redis.publish(channel, result.token);
 }
 
 console.log("feed is starting");
