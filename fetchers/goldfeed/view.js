@@ -1,4 +1,3 @@
-var name = "goldfeed";
 var currencyTwo = "USD";
 var _ = require("lodash");
 
@@ -13,7 +12,7 @@ var tails = {
   "londonfix_pm": "londonfix_pm"
 };
 
-module.exports = function (resultBus, obj) {
+module.exports = function (resultBus, source, obj) {
   var metals = [];
   for (var prop in obj) {
     metals.push(prop.split("_").shift());
@@ -21,7 +20,7 @@ module.exports = function (resultBus, obj) {
   metals = _.unique(metals);
   metals.forEach(function (metal) {
     var result = {
-      "source": name,
+      "source": source,
       "token": metal.toUpperCase() + "to" + currencyTwo,
       "bid": parseFloat(obj[metal + "_" + tails.bid] || 0),
       "ask": parseFloat(obj[metal + "_" + tails.ask] || 0),

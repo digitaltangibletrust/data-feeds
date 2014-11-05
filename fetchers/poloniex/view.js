@@ -1,17 +1,16 @@
-var name = "poloniex";
 var currencyOne = "BTC";
 var currencies = {
 	// Poloniex's token name -> Our token name.
 	'BTC_GOLD': 'GOLDDTT'
-}
+};
 
-module.exports = function (resultBus, obj) {
+module.exports = function (resultBus, source, obj) {
 
 	Object.keys( currencies ).forEach( function( key ) {
 		var val = obj[ key ];
 		if( val ) {
 			var result = {
-				"source": name,
+				"source": source,
 				"token": currencies[ key ] + "to" + currencyOne,
 				"bid": parseFloat( val.highestBid ),
 				"ask": parseFloat( val.lowestAsk ),
