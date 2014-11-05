@@ -9,10 +9,12 @@ module.exports = function (params, rawResults, callback) {
 
   function fetch(callback) {
     goldfeed.get(null, function (err, response, body) {
-      if (err) {
+      if (err && err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
         return callback(err);
       }
-      rawResults.emit("goldfeedEUR", body);
+      else if(!err && body) {
+        rawResults.emit("goldfeedEUR", body);
+      }
       setTimeout(callback, params.interval);
     });
   }

@@ -10,7 +10,9 @@ module.exports = function (params, rawResults, callback) {
       if (err && err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
         return callback(err);
       }
-      rawResults.emit("melotic", result );
+      else if(!err && result) {
+        rawResults.emit("melotic", result );
+      }
       setTimeout( fetch, params.interval );
     } );
   }
