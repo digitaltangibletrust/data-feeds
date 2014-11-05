@@ -36,7 +36,7 @@ res.on("result", function (result) {
     if( result.token.substring( result.token.length - 3 ) !== 'BTC' && 
         result.token.substring( 0, 3 ) !== 'BTC' ) {
 
-/*      models.data.getLatestPrices("USDtoBTC").complete(function (err, data) {
+      models.data.getLatestPrices("USDtoBTC").complete(function (err, data) {
         if (err) {
           console.dir(err);
         } else {
@@ -59,7 +59,7 @@ res.on("result", function (result) {
           });
         }
       });
-*/
+
     }
     models.data.create(result).complete(function (err, res) {
       if (err) {
