@@ -9,16 +9,16 @@ module.exports = function (params, rawResults, callback) {
   });  
 
   function fetch(callback) {
-    bitfinex.get(null, function(callback) {
-      return function (err, response, body) {
-        if (err) {
-          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
+    bitfinex.get(null, function (err, response, body) {
+      if (err) {
+        if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
+          return callback(err);
         }
-        else {
-          if(body) rawResults.emit("bitfinex", body);
-        }
-        setTimeout(callback, params.interval);
       }
+      else if(body) {
+        rawResults.emit("bitfinex", body);
+      }
+      setTimeout(callback, params.interval);
     });
   }
 
