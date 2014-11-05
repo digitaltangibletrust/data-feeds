@@ -1,12 +1,10 @@
-var name = "bitpay";
-var currencyTwo = "USD";
 var _ = require("lodash");
 
-module.exports = function (resultBus, currencies) {
+module.exports = function (resultBus, source, currencies) {
   currencies = _.unique(currencies);
   currencies.forEach(function (currency) {
     var result = {
-      "source": name,
+      "source": source,
       "token": currency.code.toUpperCase() + 'toBTC',
       "bid": currency.rate,
       "ask": currency.rate,

@@ -1,9 +1,9 @@
-var name = "bitfinex";
 var currencyOne = "BTC";
 var currencyTwo = "USD";
-module.exports = function (resultBus, obj) {
+
+module.exports = function (resultBus, source,  obj) {
   var result = {
-    "source": name,
+    "source": source,
     "token": currencyTwo + "to" + currencyOne,
     "bid": parseFloat(obj.bid),
     "ask": parseFloat(obj.ask),

@@ -15,7 +15,7 @@ module.exports.spin = function () {
 		if (config.sources[source].active === true) {
 			var pull = require("./" + source + "/pull.js");
 			var view = require("./" + source + "/view.js");
-			rawResults.on(source, view.bind(null, resultBus));
+			rawResults.on(source, view.bind(null, resultBus, source));
 			pull(config.sources[source], rawResults, onError.bind(null, source));
 		}
 	}
