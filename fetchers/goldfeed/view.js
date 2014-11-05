@@ -14,6 +14,9 @@ var tails = {
 };
 
 module.exports = function (resultBus, obj) {
+  console.log( '** goldFeed at ' + ( new Date() ));
+  console.log( obj );
+  
   var metals = [];
   for (var prop in obj) {
     metals.push(prop.split("_").shift());
