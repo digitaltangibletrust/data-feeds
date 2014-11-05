@@ -1,7 +1,7 @@
 var request = require("request");
 var async = require("async");
 
-module.exports = function (params, resultBus, callback) {
+module.exports = function (params, rawResults, callback) {
   var goldfeed = request.defaults({
     "url": params.url,
     "json": true
@@ -12,7 +12,7 @@ module.exports = function (params, resultBus, callback) {
       if (err) {
         return callback(err);
       }
-      resultBus.emit("goldfeedEUR", body);
+      rawResults.emit("goldfeedEUR", body);
       setTimeout(callback, params.interval);
     });
   }

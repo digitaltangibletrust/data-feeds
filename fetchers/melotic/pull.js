@@ -3,9 +3,9 @@ var async = require("async");
 var Melotic = require( "melotic" );
 var melotic = new Melotic( {} );
 
-module.exports = function (params, resultBus, callback) {
+module.exports = function (params, rawResults, callback) {
 
-  var emit = resultBus.emit.bind(resultBus, "melotic");
+  var emit = rawResults.emit.bind(rawResults, "melotic");
 
   function fetch(callback) {
     melotic.getMarkets( function( err, result ) {

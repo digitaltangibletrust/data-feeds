@@ -5,7 +5,9 @@ module.exports = {
         if (err) {
           if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
         }
-        else body && eventEmitter(body);
+        else {
+          body && eventEmitter(body);
+        }
         setTimeout(callback, interval);
       }
     }
