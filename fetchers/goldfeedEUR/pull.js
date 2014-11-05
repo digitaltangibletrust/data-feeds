@@ -4,7 +4,8 @@ var async = require("async");
 module.exports = function (params, rawResults, callback) {
   var goldfeed = request.defaults({
     "url": params.url,
-    "json": true
+    "json": true,
+    "timeout": params.timeout
   });
 
   function fetch(callback) {
