@@ -6,12 +6,20 @@ module.exports = function (params, rawResults, callback) {
     "url": params.url,
     "json": true,
     "timeout": params.timeout
-  });
-
-  var fetchCallback = require("../common").fetchCallback(rawResults.emit.bind(rawResults, "bitfinex"), params.interval);
+  });  
 
   function fetch(callback) {
-    bitfinex.get(null, fetchCallback(callback));
+    bitfinex.get(null, function(callback) {
+      return function (err, response, body) {
+        if (err) {
+          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
+        }
+        else {
+          if(body) rawResults.emit("bitfinex", body);
+        }
+        setTimeout(callback, params.interval);
+      }
+    });
   }
 
   async.forever(fetch, callback);

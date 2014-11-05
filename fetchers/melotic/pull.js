@@ -5,14 +5,12 @@ var melotic = new Melotic( {} );
 
 module.exports = function (params, rawResults, callback) {
 
-  var emit = rawResults.emit.bind(rawResults, "melotic");
-
   function fetch(callback) {
     melotic.getMarkets( function( err, result ) {
       if (err) {
         if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
       }
-      emit( result );
+      rawResults.emit("melotic", result );
       setTimeout( fetch, params.interval );
     } );
   }

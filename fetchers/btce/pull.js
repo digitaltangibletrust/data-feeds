@@ -8,10 +8,18 @@ module.exports = function (params, rawResults, callback) {
     "timeout": params.timeout
   });
 
-  var fetchCallback = require("../common").fetchCallback(rawResults.emit.bind(rawResults, "btce"), params.interval);
-
   function fetch(callback) {
-    btce.get(null, fetchCallback(callback));
+    btce.get(null, function(callback) {
+      return function (err, response, body) {
+        if (err) {
+          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
+        }
+        else {
+          if(body) rawResults.emit("btce", body);
+        }
+        setTimeout(callback, params.interval);
+      }
+    });
   }
 
   async.forever(fetch, callback);

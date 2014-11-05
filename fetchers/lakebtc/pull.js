@@ -8,10 +8,18 @@ module.exports = function (params, rawResults, callback) {
     "timeout": params.timeout
   });
 
-  var fetchCallback = require("../common").fetchCallback(rawResults.emit.bind(rawResults, "lakebtc"), params.interval);
-
   function fetch(callback) {
-    lakebtc.get(null, fetchCallback(callback));
+    lakebtc.get(null, function(callback) {
+      return function (err, response, body) {
+        if (err) {
+          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
+        }
+        else {
+          if(body) rawResults.emit("lakebtc", body);
+        }
+        setTimeout(callback, params.interval);
+      }
+    });
   }
 
   async.forever(fetch, callback);

@@ -8,10 +8,18 @@ module.exports = function (params, rawResults, callback) {
     "timeout": params.timeout
   });
 
-  var fetchCallback = require("../common").fetchCallback(rawResults.emit.bind(rawResults, "goldfeed"), params.interval);
-
   function fetch(callback) {
-    goldfeed.get(null, fetchCallback(callback));
+    goldfeed.get(null, function(callback) {
+      return function (err, response, body) {
+        if (err) {
+          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
+        }
+        else {
+          if(body) rawResults.emit("goldfeed", body);
+        }
+        setTimeout(callback, params.interval);
+      }
+    });
   }
 
   async.forever(fetch, callback);

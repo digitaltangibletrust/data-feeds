@@ -8,10 +8,18 @@ module.exports = function (params, rawResults, callback) {
     "timeout": params.timeout
   });
 
-  var fetchCallback = require("../common").fetchCallback(rawResults.emit.bind(rawResults, "bitstamp"), params.interval);
-
   function fetch(callback) {
-    bitstamp.get(null, fetchCallback(callback));
+    bitstamp.get(null, function(callback) {
+      return function (err, response, body) {
+        if (err) {
+          if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
+        }
+        else {
+          if(body) rawResults.emit("bitstamp", body);
+        }
+        setTimeout(callback, params.interval);
+      }
+    });
   }
 
   async.forever(fetch, callback);
