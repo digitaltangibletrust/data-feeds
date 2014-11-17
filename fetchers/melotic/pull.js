@@ -3,16 +3,16 @@ var async = require("async");
 var Melotic = require( "melotic" );
 var melotic = new Melotic( {} );
 
-module.exports = function (params, resultBus, callback) {
-
-  var emit = resultBus.emit.bind(resultBus, "melotic");
+module.exports = function (params, rawResults, callback) {
 
   function fetch(callback) {
     melotic.getMarkets( function( err, result ) {
-      if (err) {
-        if(err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") return callback(err);
+      if (err && err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
+        return callback(err);
       }
-      emit( result );
+      else if(!err && result) {
+        rawResults.emit("melotic", result );
+      }
       setTimeout( fetch, params.interval );
     } );
   }

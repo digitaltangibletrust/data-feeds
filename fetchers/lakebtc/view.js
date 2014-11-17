@@ -1,11 +1,8 @@
-var name = "lakebtc";
-var currencyOne = "BTC";
-var currencyTwo = "USD";
-module.exports = function (resultBus, obj) {
+module.exports = function (resultBus, source, obj) {
   for (var currency in obj) {
     resultBus.emit("result", {
-      "source": name,
-      "token": currency + "to" + currencyOne,
+      "source": source,
+      "token": currency + "toBTC",
       "bid": parseFloat(obj[currency].bid),
       "ask": parseFloat(obj[currency].ask),
       "low": parseFloat(obj[currency].low),

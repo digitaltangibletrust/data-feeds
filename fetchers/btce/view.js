@@ -1,10 +1,7 @@
-var name = "btce";
-var currencyOne = "BTC";
-var currencyTwo = "USD";
-module.exports = function (resultBus, obj) {
+module.exports = function (resultBus, source, obj) {
   var result = {
-    "source": name,
-    "token": currencyTwo + "to" + currencyOne,
+    "source": source,
+    "token": "USDtoBTC",
     "bid": parseFloat(obj.ticker.sell),
     "ask": parseFloat(obj.ticker.buy),
     "low": parseFloat(obj.ticker.low),
