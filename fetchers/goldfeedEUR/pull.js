@@ -1,5 +1,6 @@
 var request = require("request");
 var async = require("async");
+var errbit = require("../../errbit");
 
 module.exports = function (params, rawResults, callback) {
   var goldfeed = request.defaults({
@@ -11,7 +12,7 @@ module.exports = function (params, rawResults, callback) {
   function fetch(callback) {
     goldfeed.get(null, function (err, response, body) {
       if (err && err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
-        return callback(err);
+        return errbit.notify(err);
       }
       else if(!err && body) {
         rawResults.emit("goldfeedEUR", body);
