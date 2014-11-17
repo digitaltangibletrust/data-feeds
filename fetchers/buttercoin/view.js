@@ -4,8 +4,8 @@ module.exports = function (resultBus, source, obj) {
     "token": "USDtoBTC",
     "bid": parseFloat(obj.bid),
     "ask": parseFloat(obj.ask),
-    // "low": parseFloat(obj.low),
-    // "high": parseFloat(obj.high)
+    "low": 0,
+    "high": 0
   };
   resultBus.emit("result", result);
 };
