@@ -11,7 +11,7 @@ module.exports = function (params, rawResults, callback) {
 
   function fetch(callback) {
     buttercoin.getTicker(function (err, data){
-      if (err && err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
+      if (err) {
         return errbit.notify(err);
       }
       else if(!err && data) {
