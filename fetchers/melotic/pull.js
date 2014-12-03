@@ -9,6 +9,9 @@ module.exports = function (params, rawResults, callback) {
   function fetch(callback) {
     melotic.getMarkets( function( err, result ) {
       if (err && err.code !== "ETIMEDOUT" && err.code !== "ECONNRESET") {
+        if (err.constructor !== "error"){
+          err = new Error(JSON.stringify(err));
+        }
         return errbit.notify(err);
       }
       else if(!err && result) {
