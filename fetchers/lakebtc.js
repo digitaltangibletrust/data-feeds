@@ -1,16 +1,13 @@
+"use strict"; 
+
 var request = require("request");
 
-module.exports = function(apiParams, resultBus, source) {
-  var lakebtc = request.defaults({
-    "url": apiParams.url,
-    "json": true,
-    "timeout": apiParams.timeout
-  });  
-
+module.exports = function(apiParams, source) {
   return {
-    'transform': function (obj) {
+    'transform': function (obj, cb) {
+      var results = [];
       for (var currency in obj) {
-        resultBus.emit("result", {
+        results.push({
           "source": source,
           "token": currency + "toBTC",
           "bid": parseFloat(obj[currency].bid),
@@ -19,9 +16,14 @@ module.exports = function(apiParams, resultBus, source) {
           "high": parseFloat(obj[currency].high)
         });
       }
+      cb(results);
     },
-    'pull': function(callback) {
-      lakebtc.get(null, callback);
+    'pull': function(cb) {
+      request.get({
+        "url": apiParams.url,
+        "json": true,
+        "timeout": apiParams.timeout
+      }, cb);
     }
-  }
+  };
 };

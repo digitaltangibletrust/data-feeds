@@ -1,3 +1,5 @@
+"use strict";
+
 var request = require("request");
 var _ = require("lodash");
 var tails = {
@@ -11,22 +13,16 @@ var tails = {
   "londonfix_pm": "londonfix_pm"
 };
 
-module.exports = function(apiParams, resultBus, source) {
-  var goldfeed = request.defaults({
-    "url": apiParams.url,
-    "json": true,
-    "timeout": apiParams.timeout
-  });  
-
+module.exports = function(apiParams, source) {
   return {
-    'transform': function (obj) {
+    'transform': function (obj, cb) {
       var metals = [];
       for (var prop in obj) {
         metals.push(prop.split("_").shift());
       }
       metals = _.unique(metals);
-      metals.forEach(function (metal) {
-        var result = {
+      var results = metals.map(function (metal) {
+        return {
           "source": source,
           "token": metal.toUpperCase() + "toUSD",
           "bid": parseFloat(obj[metal + "_" + tails.bid] || 0),
@@ -34,11 +30,15 @@ module.exports = function(apiParams, resultBus, source) {
           "low": parseFloat(obj[metal + "_" + tails.low] || 0),
           "high": parseFloat(obj[metal + "_" + tails.high] || 0)
         };
-        resultBus.emit("result", result);
       });
+      cb(results);
     },
-    'pull': function(callback) {
-      goldfeed.get(null, callback);
+    'pull': function(cb) {
+      request.get({
+        "url": apiParams.url,
+        "json": true,
+        "timeout": apiParams.timeout
+      }, cb);
     }
-  }
+  };
 };

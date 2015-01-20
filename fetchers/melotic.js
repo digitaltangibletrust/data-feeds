@@ -1,31 +1,33 @@
-var request = require("request");
-var Melotic = require( "melotic" );
-var melotic = new Melotic( {} );
+"use strict";
 
-module.exports = function(apiParams, resultBus, source) {
+var Melotic = require("melotic");
+var melotic = new Melotic({});
+
+module.exports = function(apiParams, source) {
   return {
-    'transform': function (obj) {
+    'transform': function(obj, cb) {
       // GLDPAMPBAROZ market.
-      var data = obj[ 'gold-btc' ];
-      if( data ) {
-        resultBus.emit( "result", {
-          "source": source,
-          "token": "GLDPAMPBAROZtoBTC",
-          "bid": parseFloat( data.highest_bid ),
-          "ask": parseFloat( data.lowest_ask ),
-          "low": parseFloat( data.lowest_deal_price ),
-          "high": parseFloat( data.highest_deal_price )
-        });
+      var data = obj['gold-btc'];
+      if (!data) {
+        return cb();
       }
+      cb({
+        "source": source,
+        "token": "GLDPAMPBAROZtoBTC",
+        "bid": parseFloat(data.highest_bid),
+        "ask": parseFloat(data.lowest_ask),
+        "low": parseFloat(data.lowest_deal_price),
+        "high": parseFloat(data.highest_deal_price)
+      });
     },
-    'pull': function(callback) {
+    'pull': function(cb) {
       melotic.getMarkets(function(err, result) {
-        if(err && err.constructor !== "error"){
+        if (err && err.constructor !== "error") {
           err = new Error(JSON.stringify(err));
         }
 
-        callback(err, result, result);
+        cb(err, result, result);
       });
     }
-  }
+  };
 };

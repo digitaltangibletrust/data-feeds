@@ -1,14 +1,10 @@
+"use strict";
+
 var request = require("request");
 
-module.exports = function(apiParams, resultBus, source) {
-  var bitfinex = request.defaults({
-    "url": apiParams.url,
-    "json": true,
-    "timeout": apiParams.timeout
-  });  
-
+module.exports = function(apiParams, source) {
   return {
-    'transform': function (obj) {
+    'transform': function (obj, cb) {
       var result = {
         "source": source,
         "token": "USDtoBTC",
@@ -17,10 +13,14 @@ module.exports = function(apiParams, resultBus, source) {
         "low": parseFloat(obj.low),
         "high": parseFloat(obj.high)
       };
-      resultBus.emit("result", result);
+      cb(result);
     },
-    'pull': function(callback) {
-      bitfinex.get(null, callback);
+    'pull': function(cb) {
+      request.get({
+        "url": apiParams.url,
+        "json": true,
+        "timeout": apiParams.timeout
+      }, cb);
     }
-  }
+  };
 };

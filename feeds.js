@@ -1,15 +1,15 @@
+"use strict";
+
 var config = require("config");
+var async = require("async");
+var _ = require("lodash");
 var models = require("./models/index.js");
 var redis = require('redis').createClient(config.redis.port, config.redis.host, {
   'auth_pass': config.redis.pass || null
 });
-var EE = require("events").EventEmitter;
-var rawResults = new EE();
-var resultBus = new EE();
-var async = require("async");
-var _ = require("lodash");
 
 var errbit = require("./errbit");
+var errorThrottle = errbit.createErrorThrottle("data-feeds");
 errbit.handleExceptions();
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -43,6 +43,7 @@ if (process.env.CREATE_VIEWS) {
 ///////////////
 
 function onError(source, err) {
+  // this should really never end up being executed
   console.log("source " + source + " got error: ");
   console.dir(err);
   errbit.notify(err);
@@ -53,34 +54,31 @@ _.each(config.sources, function(params, source) {
   if (params.active === true) {
 
     var init = require("./fetchers/" + source + ".js");
-    var fetcher = init(params, resultBus, source);
-    
-    rawResults.on(source, fetcher.transform);
+    var fetcher = init(params, source);
 
-    var errorThrottle = errbit.createErrorThrottle(source);
-    function fetcherSpin(callback) {
-      fetcher.pull(function (err, response, body) {
+    async.forever(function fetcherSpin(callback) {
+      fetcher.pull(function(err, response, body) {
         if (err) {
           if (err.code === "ETIMEDOUT" || err.code === "ECONNRESET") {
-            errorThrottle(err);
+            errorThrottle(source, err);
           } else {
             errbit.notify(err);
           }
-        }
-        else if(body) {
-          rawResults.emit(source, body);
+        } else if (body) {
+          fetcher.transform(body, processResult);
         }
         setTimeout(callback, params.interval);
       });
-    }
-
-    async.forever(fetcherSpin, onError.bind(null, source));
+    }, onError.bind(null, source));
   }
 });
 
-resultBus.on("result", function (result) {
+function processResult(result) {
+  if (_.isArray(result)){
+    return _.each(result, processResult);
+  }
+
   if (result.bid > 0) {
-    
     saveResult(result);
 
     if ( !BTCinCurrencyPair(result) ){
@@ -89,7 +87,7 @@ resultBus.on("result", function (result) {
       });
     }
   }
-});
+}
 
 // is BTC one of the currencies in the token name
 function BTCinCurrencyPair(result){
@@ -120,6 +118,7 @@ function convertToBTC(result, cb){
 
 // write to the db and trigger redis
 function saveResult(data){
+  console.log(new Date(), data.source, data.token, (parseFloat(data.bid)+parseFloat(data.ask))/2);
   models.data.create(data).complete(function (err) {
     if (err) {
       return console.dir(err);

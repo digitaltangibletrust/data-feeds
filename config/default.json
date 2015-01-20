@@ -5,6 +5,7 @@
   "database": {
     "uri": "postgres://test:test@localhost/data_feeds",
     "options": {
+      "logging": false,
       "dialect": "postgres",
       "pool": {
         "maxConnections": 20,
