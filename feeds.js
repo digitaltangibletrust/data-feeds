@@ -3,9 +3,16 @@ var models = require("./models/index.js");
 var redis = require('redis').createClient(config.redis.port, config.redis.host, {
   'auth_pass': config.redis.pass || null
 });
+var EE = require("events").EventEmitter;
+var rawResults = new EE();
+var resultBus = new EE();
+var async = require("async");
+var _ = require("lodash");
 
 var errbit = require("./errbit");
 errbit.handleExceptions();
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 if (process.env.SYNC_DB) {
   return models.sequelize.sync({
@@ -35,7 +42,41 @@ if (process.env.CREATE_VIEWS) {
 // MAIN LOOP //
 ///////////////
 
-var resultBus = require("./fetchers/index.js").spin();
+function onError(source, err) {
+  console.log("source " + source + " got error: ");
+  console.dir(err);
+  errbit.notify(err);
+}
+
+// spin each of the individual fetchers
+_.each(config.sources, function(params, source) {
+  if (params.active === true) {
+
+    var init = require("./fetchers/" + source + ".js");
+    var fetcher = init(params, resultBus, source);
+    
+    rawResults.on(source, fetcher.transform);
+
+    var errorThrottle = errbit.createErrorThrottle(source);
+    function fetcherSpin(callback) {
+      fetcher.pull(function (err, response, body) {
+        if (err) {
+          if (err.code === "ETIMEDOUT" || err.code === "ECONNRESET") {
+            errorThrottle(err);
+          } else {
+            errbit.notify(err);
+          }
+        }
+        else if(body) {
+          rawResults.emit(source, body);
+        }
+        setTimeout(callback, params.interval);
+      });
+    }
+
+    async.forever(fetcherSpin, onError.bind(null, source));
+  }
+});
 
 resultBus.on("result", function (result) {
   if (result.bid > 0) {
