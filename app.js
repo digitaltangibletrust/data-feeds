@@ -39,26 +39,23 @@ function validateInterval(interval) {
 server.get("/live/:exchange", function( req, res, next ) {
   var liveDataPoint = liveData[ req.params.exchange ]
   if( liveDataPoint && ( Date.now() - liveDataPoint.timestamp ) < 10000 ) {
-    console.log( 'Reusing' );
-    res.json( liveDataPoint );
-  } else {
-    switch( req.params.exchange ) {
-      case 'bitfinex':
-    console.log( 'Refreshing' );
-        request.get( 'https://api.bitfinex.com/v1/pubticker/BTCUSD', function( error, response, data ) {
-          if( error ) {
-            next( error );
-          } else {
-            var dataObj = JSON.parse( data );
-            dataObj.timestamp = Date.now();
-            liveData[ req.params.exchange ] = dataObj;
-            res.send( dataObj );
-          }
-        });
-        break;
-      default:
-        res.send( 404 );
-    }
+    return res.send( liveDataPoint );
+  }
+  switch( req.params.exchange ) {
+    case 'bitfinex':
+      request.get( 'https://api.bitfinex.com/v1/pubticker/BTCUSD', function( error, response, data ) {
+        if( error ) {
+          return next( error );
+        }
+
+        var dataObj = JSON.parse( data );
+        dataObj.timestamp = Date.now();
+        liveData[ req.params.exchange ] = dataObj;
+        res.send( dataObj );
+      });
+      break;
+    default:
+      res.send( 404 );
   }
 });
 
