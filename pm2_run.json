@@ -2,16 +2,10 @@
   "apps": [{
     "name": "data_feed_api",
     "script": "app.js",
-    "cwd": "/var/www/data-feeds/current",
-    "env": {
-      "NODE_ENV": "production"
-    }
+    "cwd": "/var/www/data-feeds/current"
   }, {
     "name": "data_feed_puller",
     "script": "feeds.js",
-    "cwd": "/var/www/data-feeds/current",
-    "env": {
-      "NODE_ENV": "production"
-    }
+    "cwd": "/var/www/data-feeds/current"
   }]
 }

@@ -1,16 +1,24 @@
 data-feeds
 ==========
 
+#Installation
+requirements: node.js, postgresql
+* run `SYNC_DB=true node feeds.js` for recreating db structure(warning: all data will be lost)
+* run `CREATE_VIEWS=true node feeds.js` for creating aggregating views for data
 
 ##API
-Optional params(for each route):
-* interval: may be day, hour, month
-
 
 
 ```
-GET /feed
+GET /feed/<exchange>/<token>?
 ```
+Example url: `/feed/goldfeed/GOLDtoBTC?interval=day`
+
+valid intervals
+  * day
+  * hour
+  * month
+
 response:
 ```javascript
 
@@ -33,54 +41,13 @@ response:
 }]
 
 ```
-```
-GET /feed/:exchange
-```
-response(/feed/bitfinex):
-```javascript
-[{
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.46,
-  ask: 584.8,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:19:20.000Z"
-}, {
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.8,
-  ask: 584.91,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:18:19.000Z"
-}]
-```
-```
-GET /feed/:exchange/:token
-```
-response(/feed/bitfinex/USDtoBTC)
-```javascript
-
-[{
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.46,
-  ask: 584.8,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:19:20.000Z"
-}, {
-  exchange: "bitfinex",
-  token: "USDtoBTC",
-  bid: 584.8,
-  ask: 584.91,
-  low: 577.11,
-  high: 590,
-  date_trunc: "2014-07-29T23:18:19.000Z"
-}]
 
 ```
+GET /latest?token=:token
+```
+Gets latest prices on token
+
+
 ```
 GET /tokens
 ```
