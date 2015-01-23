@@ -2,6 +2,7 @@ var restify = require("restify");
 var config = require("config");
 var server = restify.createServer(config.app);
 var models = require("./models/index.js");
+var request = require( "request" );
 server.use(restify.fullResponse());
 server.use(restify.jsonp());
 server.use(restify.gzipResponse());
@@ -20,6 +21,8 @@ server.use(restify.throttle({
 var availableIntervals = ["day", "hour", "month"];
 var defaultInterval = "hour";
 
+var liveData = {};
+
 function validateInterval(interval) {
   if (!interval) {
     return defaultInterval;
@@ -29,6 +32,32 @@ function validateInterval(interval) {
   }
   return interval;
 }
+server.get("/live/:exchange", function( req, res, next ) {
+  var liveDataPoint = liveData[ req.params.exchange ]
+  if( liveDataPoint && ( Date.now() - liveDataPoint.timestamp ) < 10000 ) {
+    console.log( 'Reusing' );
+    res.json( liveDataPoint );
+  } else {
+    switch( req.params.exchange ) {
+      case 'bitfinex':
+    console.log( 'Refreshing' );
+        request.get( 'https://api.bitfinex.com/v1/pubticker/BTCUSD', function( error, response, data ) {
+          if( error ) {
+            next( error );
+          } else {
+            var dataObj = JSON.parse( data );
+            dataObj.timestamp = Date.now();
+            liveData[ req.params.exchange ] = dataObj;
+            res.send( dataObj );
+          }
+        });
+        break;
+      default:
+        res.send( 404 );
+    }
+  }
+});
+
 server.get("/feed", function (req, res, next) {
   var interval = validateInterval(req.params.interval);
   var params = ["1 " + interval];
