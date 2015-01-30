@@ -9,7 +9,7 @@ module.exports = function(apiParams, source) {
       // GLDPAMPBAROZ market.
       var data = obj['gold-btc'];
       if (!data) {
-        return cb();
+        return cb(new Error("No data"));
       }
       cb({
         "source": source,

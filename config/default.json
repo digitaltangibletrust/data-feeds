@@ -77,7 +77,7 @@
     },
     "melotic": {
       "interval": 60000,
-      "active": true  
+      "active": false  
     }
   },
   "port": 9091,
