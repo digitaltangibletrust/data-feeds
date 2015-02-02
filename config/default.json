@@ -59,7 +59,7 @@
     "lakebtc": {
       "url": "https://www.lakebtc.com/api_v1/ticker",
       "interval": 60000,
-      "active": true,
+      "active": false,
       "timeout": 30000
     },
     "poloniex": {
