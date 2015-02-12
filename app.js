@@ -3,6 +3,8 @@ var config = require("config");
 var server = restify.createServer(config.app);
 var models = require("./models/index.js");
 var request = require( "request" );
+var async = require( 'async' );
+var _ = require( 'lodash' );
 
 var errbit = require("./errbit");
 errbit.handleExceptions();
@@ -97,6 +99,78 @@ server.get("/feed/:exchange/:token", function (req, res, next) {
     res.send(data);
     next();
   });
+});
+
+server.get("/highstockfeed/:exchange/:token", function (req, res, next) {
+  if( req.query.start && req.query.end ) {
+    var start = req.query.start;
+    var end = req.query.end;
+
+    recoverRange( parseInt( start ), parseInt( end ) );
+  } else {
+    models.sequelize.query( 
+      "SELECT source as exchange, date_trunc('second', created_at) FROM data WHERE source=? AND token=? ORDER BY created_at ASC LIMIT 1", 
+      null, { "raw": true }, 
+      [ req.params.exchange, req.params.token ] ).complete( function( err, data ) {
+        if( err ) {
+          return next( err );
+        }
+
+        var start = Date.parse( data[0].date_trunc );
+        models.sequelize.query( 
+          "SELECT source as exchange, date_trunc('second', created_at) FROM data WHERE source=? AND token=? ORDER BY created_at DESC LIMIT 1", 
+          null, { "raw": true }, 
+          [ req.params.exchange, req.params.token ] ).complete( function( err, data ) {
+            if( err ) {
+              return next( err );
+            }
+
+            var end = Date.parse( data[0].date_trunc );
+
+            recoverRange( start, end );
+        } );
+    } );
+  }
+
+  function recoverRange( start, end ) {
+
+    var timeSpacing = (end - start) / 100;
+    var result = [];
+    for( var timestamp = start; timestamp < end; timestamp += timeSpacing ) {
+      result.push( { 'target': new Date( timestamp )} );
+    }
+
+    async.forEach( result,
+      function( item, done ) {
+        var params = [ req.params.exchange, req.params.token, item.target ];
+        models.sequelize.query("SELECT source as exchange, token, bid, ask, low, high, date_trunc('second', created_at) FROM data WHERE source=? AND token= ? AND created_at <= ? ORDER BY created_at DESC LIMIT 1", null, {
+          "raw": true
+        }, params).complete(function (err, data) {
+          if (err) {
+            return done(err);
+          }
+          if( data.length > 0 ) {
+            try {
+              _.assign( item, data[0] );
+            } catch( error ) {
+              return done( error );
+            }
+          }
+
+          done();
+        });
+
+      },
+      function( error ) {
+        if( error ) {
+          return next( error );
+        }
+
+        res.send( result );
+        next();
+      }
+    );
+  }
 });
 // Returns the most recent price item prior to a given targetTime, specified in milliseconds.
 server.get("/nearest/:exchange/:token", function (req, res, next) {
