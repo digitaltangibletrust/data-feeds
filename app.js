@@ -98,6 +98,19 @@ server.get("/feed/:exchange/:token", function (req, res, next) {
     next();
   });
 });
+
+server.get("/highstockfeed/:exchange/:token", function (req, res, next) {
+  var params = [req.params.exchange, req.params.token, "1 day"];
+  models.sequelize.query("SELECT source as exchange, token, bid, ask, low, high, date_trunc('second', created_at) FROM data WHERE source=? AND token= ? AND created_at > (NOW() - ?::interval) ORDER BY created_at ASC", null, {
+    "raw": true
+  }, params).complete(function (err, data) {
+    if (err) {
+      return next(err);
+    }
+    res.send(data);
+    next();
+  });
+});
 // Returns the most recent price item prior to a given targetTime, specified in milliseconds.
 server.get("/nearest/:exchange/:token", function (req, res, next) {
   var params = [ req.params.exchange, req.params.token, new Date( parseInt( req.params.targetTime )) ];
