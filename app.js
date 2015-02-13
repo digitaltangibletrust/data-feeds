@@ -139,6 +139,7 @@ server.get("/highstockfeed/:exchange/:token", function (req, res, next) {
     for( var timestamp = start; timestamp < end; timestamp += timeSpacing ) {
       result.push( { 'target': new Date( timestamp )} );
     }
+    result.push( { 'target': new Date( end ) } );
 
     async.forEach( result,
       function( item, done ) {
