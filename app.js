@@ -1,3 +1,4 @@
+"use strict";
 var restify = require("restify");
 var config = require("config");
 var server = restify.createServer(config.app);
@@ -39,7 +40,7 @@ function validateInterval(interval) {
   return interval;
 }
 server.get("/live/:exchange", function( req, res, next ) {
-  var liveDataPoint = liveData[ req.params.exchange ]
+  var liveDataPoint = liveData[ req.params.exchange ];
   if( liveDataPoint && ( Date.now() - liveDataPoint.timestamp ) < 10000 ) {
     return res.send( liveDataPoint );
   }
