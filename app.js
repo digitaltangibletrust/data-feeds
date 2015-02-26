@@ -25,6 +25,7 @@ server.use(restify.throttle({
     }
   }
 }));
+
 var availableIntervals = ["day", "hour", "month"];
 var defaultInterval = "hour";
 
@@ -39,6 +40,7 @@ function validateInterval(interval) {
   }
   return interval;
 }
+
 server.get("/live/:exchange", function( req, res, next ) {
   var liveDataPoint = liveData[ req.params.exchange ];
   if( liveDataPoint && ( Date.now() - liveDataPoint.timestamp ) < 10000 ) {
@@ -75,6 +77,7 @@ server.get("/feed", function (req, res, next) {
     next();
   });
 });
+
 server.get("/feed/:exchange", function (req, res, next) {
   var interval = validateInterval(req.params.interval);
   var params = [req.params.exchange, "1 " + interval];
@@ -88,6 +91,7 @@ server.get("/feed/:exchange", function (req, res, next) {
     next();
   });
 });
+
 server.get("/feed/:exchange/:token", function (req, res, next) {
   var interval = validateInterval(req.params.interval);
   var params = [req.params.exchange, req.params.token, "1 " + interval];
@@ -174,6 +178,7 @@ server.get("/highstockfeed/:exchange/:token", function (req, res, next) {
     );
   }
 });
+
 // Returns the most recent price item prior to a given targetTime, specified in milliseconds.
 server.get("/nearest/:exchange/:token", function (req, res, next) {
   var params = [ req.params.exchange, req.params.token, new Date( parseInt( req.params.targetTime )) ];
@@ -188,6 +193,7 @@ server.get("/nearest/:exchange/:token", function (req, res, next) {
   });
   next();
 });
+
 server.get("/tokens", function (req, res, next) {
   models.sequelize.query("SELECT DISTINCT token FROM data", null, {
     "raw": true
@@ -199,6 +205,7 @@ server.get("/tokens", function (req, res, next) {
     next();
   });
 });
+
 server.get("/exchanges", function (req, res, next) {
   models.sequelize.query("SELECT DISTINCT source as exchange FROM data", null, {
     "raw": true
@@ -210,6 +217,7 @@ server.get("/exchanges", function (req, res, next) {
     next();
   });
 });
+
 server.listen(config.port, function () {
   console.log("%s listening at %s", server.name, server.url);
 });
