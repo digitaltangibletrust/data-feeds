@@ -41,35 +41,55 @@ function validateInterval(interval) {
   return interval;
 }
 
-server.get("/live/:exchange", function( req, res, next ) {
-  var liveDataPoint = liveData[ req.params.exchange ];
-  if( liveDataPoint && ( Date.now() - liveDataPoint.timestamp ) < 10000 ) {
-    return res.send( liveDataPoint );
+server.get("/live/:exchange", function(req, res, next) {
+  var liveDataPoint = liveData[req.params.exchange];
+  if (liveDataPoint && (Date.now() - liveDataPoint.timestamp) < 10000) {
+    return res.send(liveDataPoint);
   }
-  switch( req.params.exchange ) {
+  switch (req.params.exchange) {
     case 'bitfinex':
-      request.get( 'https://api.bitfinex.com/v1/pubticker/BTCUSD', function( error, response, data ) {
-        if( error ) {
-          return next( error );
+      request.get('https://api.bitfinex.com/v1/pubticker/BTCUSD', function(err, response, data) {
+        if (err) {
+          errbit.notify(err);
+          return next(); // database fallback
         }
-        
+
         var dataObj;
-        
+
         try {
           dataObj = JSON.parse(data);
-        } catch(e){
-          //fall back to last liveDataPoint if we can't parse
+        } catch (e) {
           errbit.notify(new Error("data-feeds api could not parse bitfinex ticker response: " + data));
-          return res.send( liveDataPoint );
+          next(); // database fallback
         }
 
         dataObj.timestamp = Date.now();
-        liveData[ req.params.exchange ] = dataObj;
-        res.send( dataObj );
+        liveData[req.params.exchange] = dataObj;
+        res.send(dataObj);
       });
       break;
     default:
-      res.send( 404 );
+      res.send(404);
+  }
+}, function databaseFallback(req, res, next) {
+  switch (req.params.exchange) {
+    case 'bitfinex':
+      models.sequelize.query("SELECT source as exchange, token, bid, ask, low, high, date_trunc('second', created_at) FROM data WHERE source=? AND token= ? ORDER BY created_at DESC LIMIT 1", null, {
+        "raw": true
+      }, ['bitfinex', 'USDtoBTC']).complete(function(err, data) {
+        // this fallback from the database doesn't mirror the live 
+        // response perfectly, but it covers all values we're likely to use
+        var latest = _.first(data);
+        res.send({
+          'mid': (latest.bid + latest.ask / 2).toFixed(4),
+          'bid': latest.bid.toFixed(4),
+          'ask': latest.ask.toFixed(4),
+          'timestamp': Date.parse(latest.date_trunc)
+        });
+      });
+      break;
+    default:
+      res.send(404);
   }
 });
 
