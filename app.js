@@ -52,8 +52,17 @@ server.get("/live/:exchange", function( req, res, next ) {
         if( error ) {
           return next( error );
         }
+        
+        var dataObj;
+        
+        try {
+          dataObj = JSON.parse(data);
+        } catch(e){
+          //fall back to last liveDataPoint if we can't parse
+          errbit.notify(new Error("data-feeds api could not parse bitfinex ticker response: " + data));
+          return res.send( liveDataPoint );
+        }
 
-        var dataObj = JSON.parse( data );
         dataObj.timestamp = Date.now();
         liveData[ req.params.exchange ] = dataObj;
         res.send( dataObj );
