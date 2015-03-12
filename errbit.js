@@ -1,9 +1,10 @@
+"use strict";
 var config = require("config");
 var airbrake = require("airbrake").createClient(config.airbrake.api_key);
 airbrake.serviceHost = 'errbit.digitaltangibletrust.com';
 
 airbrake.createErrorThrottle = function(processName, errorInterval) {
-  var errorInterval = errorInterval || 15 * 60 * 1000; // 15 minutes
+  errorInterval = errorInterval || 15 * 60 * 1000; // 15 minutes
   var errorTimers = {};
 
   return function (spinner, err) {
