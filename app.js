@@ -60,7 +60,7 @@ server.get("/live/:exchange", function(req, res, next) {
           dataObj = JSON.parse(data);
         } catch (e) {
           errbit.notify(new Error("data-feeds api could not parse bitfinex ticker response: " + data));
-          return next(); // database fallback
+          return req.send(500);
         }
 
         dataObj.timestamp = Date.now();
