@@ -51,7 +51,7 @@ server.get("/live/:exchange", function(req, res, next) {
       request.get('https://api.bitfinex.com/v1/pubticker/BTCUSD', function(err, response, data) {
         if (err) {
           errbit.notify(err);
-          return req.send(500);
+          return res.send(500);
         }
 
         var dataObj;
@@ -60,7 +60,7 @@ server.get("/live/:exchange", function(req, res, next) {
           dataObj = JSON.parse(data);
         } catch (e) {
           errbit.notify(new Error("data-feeds api could not parse bitfinex ticker response: " + data));
-          return req.send(500);
+          return res.send(500);
         }
 
         dataObj.timestamp = Date.now();
