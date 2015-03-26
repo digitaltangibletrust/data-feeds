@@ -51,7 +51,7 @@ server.get("/live/:exchange", function(req, res, next) {
       request.get('https://api.bitfinex.com/v1/pubticker/BTCUSD', function(err, response, data) {
         if (err) {
           errbit.notify(err);
-          return next(); // database fallback
+          return req.send(500);
         }
 
         var dataObj;
