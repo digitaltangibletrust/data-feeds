@@ -23,7 +23,7 @@ module.exports = function(apiParams, source, models) {
     }
   };
 
-  // for each config.serica.feeds
+  // for each db.sericafeeds
   function processFeed(feed, cb) {
     var totalWeight = 0;
 
@@ -66,10 +66,18 @@ module.exports = function(apiParams, source, models) {
         return cb(err);
       }
 
+      // normalize
       composite.bid /= totalWeight;
       composite.ask /= totalWeight;
       composite.low /= totalWeight;
       composite.high /= totalWeight;
+
+      // adjust by the serica bid and ask premium
+      composite.bid *= (1 - feed.bid_premium / 100);
+      composite.ask *= (1 + feed.ask_premium / 100);
+      composite.low *= (1 - feed.bid_premium / 100);
+      composite.high *= (1 + feed.ask_premium / 100);
+
 
       cb(null, composite);
     });
