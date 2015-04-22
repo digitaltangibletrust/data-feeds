@@ -9,8 +9,16 @@ module.exports = function(apiParams, source, models) {
       cb(results);
     },
     'pull': function(cb) {
-      async.map(apiParams.feeds, processFeed, function(err, results) {
-        cb(err, null, results); // callback with request format
+      models.sericafeed.findAll({
+        'active': true
+      }).complete(function(err, feeds) {
+        if(err) {
+          return cb(err);
+        }
+
+        async.map(feeds, processFeed, function(err, results) {
+          cb(err, null, results); // callback with request format
+        });
       });
     }
   };
@@ -20,7 +28,7 @@ module.exports = function(apiParams, source, models) {
     var totalWeight = 0;
 
     var composite = {
-      'source': source,
+      'source': feed.name,
       'token': feed.token,
       'bid': 0,
       'ask': 0,
@@ -28,13 +36,13 @@ module.exports = function(apiParams, source, models) {
       'high': 0
     };
 
-    async.each(Object.keys(feed.weights), function(exchange, eachCB) {
+    async.each(Object.keys(feed.getWeights()), function(exchange, eachCB) {
       models.data.getData({
         'resolution': 'data_1min',
         'exchange': exchange,
         'token': feed.token,
         'order': 'DESC',
-        'minutesAgo': apiParams.subfeedIsStaleMinutes,
+        'minutesAgo': feed.subfeed_is_stale_minutes,
         'limit': 1,
       }).complete(function(err, data) {
         if (err) {
@@ -47,7 +55,7 @@ module.exports = function(apiParams, source, models) {
           composite.ask += data[0].ask;
           composite.low += data[0].low;
           composite.high += data[0].high;
-          totalWeight += feed.weights[exchange];
+          totalWeight += feed.getWeights()[exchange];
         }
 
 

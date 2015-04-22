@@ -20,25 +20,25 @@ module.exports = function (sequelize, DataTypes) {
       "allowNull": false
     },
     // Percentage below market bid that we are willing to buy this asset
-    "bidPremium": {
+    "bid_premium": {
       "type": DataTypes.FLOAT,
       "allowNull": false,
       "defaultValue": 0.5
     },
     // Percentage above market ask that we are willing to sell this asset
-    "askPremium": {
+    "ask_premium": {
       "type": DataTypes.FLOAT,
       "allowNull": false,
       "defaultValue": 0.5
     },
     // Weight to attribute each subfeed when composing our base bid/ask values. Stringified JSON object like so: {'bitfinex': 2, 'bitstamp': 3, 'btce': 1}
-    "subfeedWeights": {
+    "subfeed_weights": {
       "type": DataTypes.STRING,
       "allowNull": false,
-      "defaultValue": JSON.stringify({});
+      "defaultValue": JSON.stringify({})
     },
     // Number of minutes with no new data point for which we consider the feed non-functional and begin ignoring it
-    "subfeedIsStaleMinutes": {
+    "subfeed_is_stale_minutes": {
       "type": DataTypes.INTEGER,
       "allowNull": false,
       "defaultValue": 5
@@ -57,6 +57,9 @@ module.exports = function (sequelize, DataTypes) {
     "instanceMethods": {
       "calcSpreads": function (base) {
         // TODO
+      },
+      "getWeights": function () {
+        return JSON.parse(this.subfeed_weights);
       }
     }
   });

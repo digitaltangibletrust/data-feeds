@@ -14,7 +14,7 @@ errbit.handleExceptions();
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-if (process.env.SYNC_DB) {
+if (process.env.RESET_DB) {
   return models.sequelize.sync({
     "force": true
   }).complete(function (err) {
@@ -35,6 +35,25 @@ if (process.env.CREATE_VIEWS) {
       return process.exit(1);
     }
     process.exit(0);
+  });
+}
+
+if (process.env.CREATE_SERICA_FEEDS) {
+  return models.sericafeed.sync({
+    "force": true
+  }).complete(function (err) {
+    if (err) {
+      console.dir(err);
+      return process.exit(1);
+    }
+    models.sequelize.query(require("fs").readFileSync("./sql/serica-feeds.sql").toString()).complete(function (err) {
+      console.log("done");
+      if (err) {
+        console.dir(err);
+        return process.exit(1);
+      }
+       process.exit(0);
+    });
   });
 }
 
