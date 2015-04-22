@@ -17,9 +17,7 @@ module.exports = function(apiParams, source, models) {
 
   // for each config.serica.feeds
   function processFeed(feed, cb) {
-    var totalWeight = _.reduce(feed.weights, function(sum, weight) {
-      return sum + weight;
-    }, 0);
+    var totalWeight = 0;
 
     var composite = {
       'source': source,
@@ -36,18 +34,22 @@ module.exports = function(apiParams, source, models) {
         'exchange': exchange,
         'token': feed.token,
         'order': 'DESC',
+        'minutesAgo': apiParams.subfeedIsStaleMinutes,
         'limit': 1,
       }).complete(function(err, data) {
         if (err) {
           return eachCB(err);
         }
 
-        var relativeWeight = feed.weights[exchange] / totalWeight;
+        //If we don't see the feed it is likely stale
+        if(data && data[0]) {
+          composite.bid += data[0].bid;
+          composite.ask += data[0].ask;
+          composite.low += data[0].low;
+          composite.high += data[0].high;
+          totalWeight += feed.weights[exchange];
+        }
 
-        composite.bid += data[0].bid * relativeWeight;
-        composite.ask += data[0].ask * relativeWeight;
-        composite.low += data[0].low * relativeWeight;
-        composite.high += data[0].high * relativeWeight;
 
         eachCB();
       });
@@ -55,6 +57,11 @@ module.exports = function(apiParams, source, models) {
       if (err) {
         return cb(err);
       }
+
+      composite.bid /= totalWeight;
+      composite.ask /= totalWeight;
+      composite.low /= totalWeight;
+      composite.high /= totalWeight;
 
       cb(null, composite);
     });

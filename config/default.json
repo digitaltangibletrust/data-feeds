@@ -83,6 +83,7 @@
       "interval": 60000,
       "active": true,
       "timeout": 30000,
+      "subfeedIsStaleMinutes": 5,
       "feeds": [{
         "token": "GOLDtoUSD",
         "weights": {"goldfeed": 1}
