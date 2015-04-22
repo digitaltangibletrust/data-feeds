@@ -78,6 +78,27 @@
     "melotic": {
       "interval": 60000,
       "active": false  
+    },
+    "serica": {
+      "interval": 60000,
+      "active": true,
+      "timeout": 30000,
+      "feeds": [{
+        "token": "GOLDtoUSD",
+        "weights": {"goldfeed": 1}
+      }, {
+        "token": "SILVERtoUSD",
+        "weights": {"goldfeed": 1}
+      }, {
+        "token": "PLATINUMtoUSD",
+        "weights": {"goldfeed": 1}
+      }, {
+        "token": "PALLADIUMtoUSD",
+        "weights": {"goldfeed": 1}
+      }, {
+        "token": "USDtoBTC",
+        "weights": {"bitstamp": 1, "bitfinex": 1, "btce": 1}
+      }]
     }
   },
   "port": 9091,

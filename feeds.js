@@ -54,7 +54,7 @@ _.each(config.sources, function(params, source) {
   if (params.active === true) {
 
     var init = require("./fetchers/" + source + ".js");
-    var fetcher = init(params, source);
+    var fetcher = init(params, source, models);
 
     async.forever(function fetcherSpin(callback) {
       fetcher.pull(function(err, response, body) {
