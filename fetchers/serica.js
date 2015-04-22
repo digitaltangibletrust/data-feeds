@@ -21,14 +21,16 @@ module.exports = function(apiParams, source, models) {
       return sum + weight;
     }, 0);
 
-    async.reduce(Object.keys(feed.weights), {
+    var composite = {
       'source': source,
       'token': feed.token,
       'bid': 0,
       'ask': 0,
       'low': 0,
       'high': 0
-    }, function(composite, exchange, reduceCB) {
+    };
+
+    async.each(Object.keys(feed.weights), function(exchange, eachCB) {
       models.data.getData({
         'resolution': 'data_1min',
         'exchange': exchange,
@@ -37,7 +39,7 @@ module.exports = function(apiParams, source, models) {
         'limit': 1,
       }).complete(function(err, data) {
         if (err) {
-          return reduceCB(err);
+          return eachCB(err);
         }
 
         var relativeWeight = feed.weights[exchange] / totalWeight;
@@ -47,8 +49,14 @@ module.exports = function(apiParams, source, models) {
         composite.low += data[0].low * relativeWeight;
         composite.high += data[0].high * relativeWeight;
 
-        reduceCB(null, composite);
+        eachCB();
       });
-    }, cb);
+    }, function(err) {
+      if (err) {
+        return cb(err);
+      }
+
+      cb(null, composite);
+    });
   }
 };
