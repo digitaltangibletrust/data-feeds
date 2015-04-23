@@ -33,8 +33,8 @@ module.exports = function (sequelize, DataTypes) {
       "allowNull": false,
       "defaultValue": 0.5
     },
-    // Weight to attribute each subfeed when composing our base bid/ask values. Stringified JSON object like so: {'bitfinex': 2, 'bitstamp': 3, 'btce': 1}
-    "subfeed_weights": {
+    // A subfeed is an exchange and a weight to attribute to it's values when composing our base bid/ask values. Stringified JSON object like so: [{"exchange":"bitstamp","weight":1},{"exchange":"bitfinex","weight":1},{"exchange":"btce","weight":1}]
+    "subfeeds": {
       "type": DataTypes.STRING,
       "allowNull": false,
       "defaultValue": JSON.stringify({})
@@ -58,10 +58,10 @@ module.exports = function (sequelize, DataTypes) {
     },
     "instanceMethods": {
       "getExchanges": function () {
-        return _.pluck(JSON.parse(this.subfeed_weights), 'exchange');
+        return _.pluck(JSON.parse(this.subfeeds), 'exchange');
       },
       "getWeight": function (exchange) {
-        var subfeed = _.find(JSON.parse(this.subfeed_weights), {'exchange': exchange});
+        var subfeed = _.find(JSON.parse(this.subfeeds), {'exchange': exchange});
         return subfeed.weight;
       }
     }
