@@ -1,4 +1,6 @@
 'use strict';
+var _ = require('lodash');
+
 module.exports = function (sequelize, DataTypes) {
   var globalModels;
 
@@ -55,11 +57,12 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
     "instanceMethods": {
-      "calcSpreads": function (base) {
-        // TODO
+      "getExchanges": function () {
+        return _.pluck(JSON.parse(this.subfeed_weights), 'exchange');
       },
-      "getWeights": function () {
-        return JSON.parse(this.subfeed_weights);
+      "getWeight": function (exchange) {
+        var subfeed = _.find(JSON.parse(this.subfeed_weights), {'exchange': exchange});
+        return subfeed.weight;
       }
     }
   });

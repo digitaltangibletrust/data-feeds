@@ -36,7 +36,7 @@ module.exports = function(apiParams, source, models) {
       'high': 0
     };
 
-    async.each(Object.keys(feed.getWeights()), function(exchange, eachCB) {
+    async.each(feed.getExchanges(), function(exchange, eachCB) {
       models.data.getData({
         'resolution': 'data_1min',
         'exchange': exchange,
@@ -55,7 +55,7 @@ module.exports = function(apiParams, source, models) {
           composite.ask += data[0].ask;
           composite.low += data[0].low;
           composite.high += data[0].high;
-          totalWeight += feed.getWeights()[exchange];
+          totalWeight += feed.getWeight(exchange);
         }
 
 
