@@ -63,7 +63,7 @@ module.exports = function (sequelize, DataTypes) {
       },
       "getWeight": function (exchange) {
         var subfeed = _.find(JSON.parse(this.subfeeds), {'exchange': exchange});
-        return subfeed.weight;
+        return parseFloat(subfeed.weight);
       },
       "calcSpreads": function(cb) {
         var feed = this;
@@ -93,11 +93,12 @@ module.exports = function (sequelize, DataTypes) {
 
             //If we don't see the feed it is likely stale
             if(data && data[0]) {
-              composite.bid += data[0].bid;
-              composite.ask += data[0].ask;
-              composite.low += data[0].low;
-              composite.high += data[0].high;
-              totalWeight += feed.getWeight(exchange);
+              var weight = feed.getWeight(exchange);
+              composite.bid += data[0].bid * weight;
+              composite.ask += data[0].ask * weight;
+              composite.low += data[0].low * weight;
+              composite.high += data[0].high * weight;
+              totalWeight += weight;
             }
 
 

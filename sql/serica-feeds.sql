@@ -110,7 +110,7 @@ INSERT INTO
     'USDtoBTC',
     0.5,
     0.5,
-    '[{"exchange":"bitstamp","weight":1},{"exchange":"bitfinex","weight":1},{"exchange":"btce","weight":1}]',
+    '[{"exchange":"bitstamp","weight":1},{"exchange":"bitfinex","weight":1},{"exchange":"btce","weight":1},{"exchange":"bitpay","weight":0}]',
     5,
     true,
     now(),
