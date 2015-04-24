@@ -101,6 +101,101 @@ INSERT INTO
     ask_premium,
     subfeeds,
     subfeed_is_stale_minutes,
+    active,created_at,
+    updated_at
+  )
+  VALUES (
+    'serica',
+    'GOLDtoEUR',
+    0.5,
+    0.5,
+    '[{"exchange":"goldfeedEUR","weight":1}]',
+    5,
+    true,
+    now(),
+    now()
+  );
+
+INSERT INTO
+  sericafeeds (
+    name,
+    token,
+    bid_premium,
+    ask_premium,
+    subfeeds,
+    subfeed_is_stale_minutes,
+    active,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    'serica',
+    'SILVERtoEUR',
+    0.5,
+    0.5,
+    '[{"exchange":"goldfeedEUR","weight":1}]',
+    5,
+    true,
+    now(),
+    now()
+  );
+
+INSERT INTO
+  sericafeeds (
+    name,
+    token,
+    bid_premium,
+    ask_premium,
+    subfeeds,
+    subfeed_is_stale_minutes,
+    active,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    'serica',
+    'PLATINUMtoEUR',
+    0.5,
+    0.5,
+    '[{"exchange":"goldfeedEUR","weight":1}]',
+    5,
+    true,
+    now(),
+    now()
+  );
+
+INSERT INTO
+  sericafeeds (
+    name,
+    token,
+    bid_premium,
+    ask_premium,
+    subfeeds,
+    subfeed_is_stale_minutes,
+    active,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    'serica',
+    'PALLADIUMtoEUR',
+    0.5,
+    0.5,
+    '[{"exchange":"goldfeedEUR","weight":1}]',
+    5,
+    true,
+    now(),
+    now()
+  );
+
+INSERT INTO
+  sericafeeds (
+    name,
+    token,
+    bid_premium,
+    ask_premium,
+    subfeeds,
+    subfeed_is_stale_minutes,
     active,
     created_at,
     updated_at

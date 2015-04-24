@@ -100,7 +100,7 @@ function processResult(result) {
   if (result.bid > 0) {
     saveResult(result);
 
-    if ( !BTCinCurrencyPair(result) ){
+    if ( isNonBTCToUSD(result) ){
       convertToBTC(result, function (converted) {
         saveResult(converted);
       });
@@ -108,9 +108,9 @@ function processResult(result) {
   }
 }
 
-// is BTC one of the currencies in the token name
-function BTCinCurrencyPair(result){
-  return result.token.substring( result.token.length - 3 ) === 'BTC' || result.token.substring( 0, 3 ) === 'BTC';
+// is anything but BTC the first currency and USD the last currency in the token name?
+function isNonBTCToUSD(result){
+  return result.token.substring( result.token.length - 3 ) === 'USD' && result.token.substring( 0, 3 ) !== 'BTC';
 }
 
 // convert to btc
