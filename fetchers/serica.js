@@ -17,7 +17,19 @@ module.exports = function(apiParams, source, models) {
         }
 
         async.map(feeds, processFeed, function(err, results) {
-          cb(err, null, results); // callback with request format
+          if(err) {
+            return cb(err);
+          }
+
+          determineUSDtoEUR(function(err, USDtoEUR) {
+            if(err) {
+              return cb(err);
+            }
+
+            results.push(USDtoEUR);
+
+            cb(err, null, results); // callback with request format
+          })
         });
       });
     }
@@ -26,5 +38,37 @@ module.exports = function(apiParams, source, models) {
   // for each db.sericafeeds
   function processFeed(feed, cb) {
     feed.calcSpreads(cb);
+  }
+
+  // Create a simple conversion from USDtoEUR via the bitpay rated for USD and EUR to BTC
+  function determineUSDtoEUR(cb) {
+    async.map(['USDtoBTC', 'EURtoBTC'], function(token, cb) {
+      models.data.getData({
+        'resolution': 'data_1min',
+        'exchange': 'bitpay',
+        'token': token,
+        'order': 'DESC',
+        'limit': 1,
+      }).complete(cb);
+    }, function(err, rates) {
+      if(err) {
+        return cb(err);
+      }
+
+      var USDtoBTC = rates[0][0];
+      var EURtoBTC = rates[1][0];
+      var rate = USDtoBTC.ask / EURtoBTC.ask;
+
+      var USDtoEUR = {
+        'source': 'serica',
+        'token': 'USDtoEUR',
+        'bid': rate,
+        'ask': rate,
+        'low': rate,
+        'high': rate,
+      };
+
+      cb(null, USDtoEUR);
+    })
   }
 };
