@@ -78,6 +78,10 @@
     "melotic": {
       "interval": 60000,
       "active": false  
+    },
+    "serica": {
+      "interval": 60000,
+      "active": true
     }
   },
   "port": 9091,

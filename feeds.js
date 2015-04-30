@@ -14,7 +14,7 @@ errbit.handleExceptions();
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-if (process.env.SYNC_DB) {
+if (process.env.RESET_DB) {
   return models.sequelize.sync({
     "force": true
   }).complete(function (err) {
@@ -38,6 +38,25 @@ if (process.env.CREATE_VIEWS) {
   });
 }
 
+if (process.env.CREATE_SERICA_FEEDS) {
+  return models.sericafeed.sync({
+    "force": true
+  }).complete(function (err) {
+    if (err) {
+      console.dir(err);
+      return process.exit(1);
+    }
+    models.sequelize.query(require("fs").readFileSync("./sql/serica-feeds.sql").toString()).complete(function (err) {
+      console.log("done");
+      if (err) {
+        console.dir(err);
+        return process.exit(1);
+      }
+       process.exit(0);
+    });
+  });
+}
+
 ///////////////
 // MAIN LOOP //
 ///////////////
@@ -54,7 +73,7 @@ _.each(config.sources, function(params, source) {
   if (params.active === true) {
 
     var init = require("./fetchers/" + source + ".js");
-    var fetcher = init(params, source);
+    var fetcher = init(params, source, models);
 
     async.forever(function fetcherSpin(callback) {
       fetcher.pull(function(err, response, body) {
@@ -81,7 +100,7 @@ function processResult(result) {
   if (result.bid > 0) {
     saveResult(result);
 
-    if ( !BTCinCurrencyPair(result) ){
+    if ( isNonBTCToUSD(result) ){
       convertToBTC(result, function (converted) {
         saveResult(converted);
       });
@@ -89,9 +108,9 @@ function processResult(result) {
   }
 }
 
-// is BTC one of the currencies in the token name
-function BTCinCurrencyPair(result){
-  return result.token.substring( result.token.length - 3 ) === 'BTC' || result.token.substring( 0, 3 ) === 'BTC';
+// is anything but BTC the first currency and USD the last currency in the token name?
+function isNonBTCToUSD(result){
+  return result.token.substring( result.token.length - 3 ) === 'USD' && result.token.substring( 0, 3 ) !== 'BTC';
 }
 
 // convert to btc

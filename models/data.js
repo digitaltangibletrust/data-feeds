@@ -62,6 +62,9 @@ module.exports = function (sequelize, DataTypes) {
           query.push("AND token=?");
           params.push(opts.token);
         }
+        if (opts.minutesAgo) {
+          query.push("AND time >= NOW() - INTERVAL '" + opts.minutesAgo + " minutes'");
+        }
         query.push("ORDER BY time " + ((opts.order && opts.order.toUpperCase() === "DESC") ? "DESC" : "ASC"));
         if (opts.limit) {
           query.push(" LIMIT ?");

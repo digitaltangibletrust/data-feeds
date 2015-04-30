@@ -3,8 +3,9 @@ data-feeds
 
 #Installation
 requirements: node.js, postgresql
-* run `SYNC_DB=true node feeds.js` for recreating db structure(warning: all data will be lost)
+* run `RESET_DB=true node feeds.js` for recreating db structure (warning: all data will be lost)
 * run `CREATE_VIEWS=true node feeds.js` for creating aggregating views for data
+* run `CREATE_SERICA_FEEDS=true node feeds.js` for creating the serica feeds tables (warning: all serica feed data will be lost)
 
 ##API
 
