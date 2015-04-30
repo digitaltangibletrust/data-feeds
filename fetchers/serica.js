@@ -6,7 +6,7 @@ var async = require('async');
 module.exports = function(apiParams, source, models) {
   return {
     'transform': function (results, cb) {
-      cb(results);
+      cb(_.compact(results));
     },
     'pull': function(cb) {
       models.sericafeed.findAll({
@@ -57,6 +57,11 @@ module.exports = function(apiParams, source, models) {
 
       var USDtoBTC = rates[0][0];
       var EURtoBTC = rates[1][0];
+
+      if(!USDtoBTC || !EURtoBTC) {
+        return cb();
+      }
+
       var rate = USDtoBTC.ask / EURtoBTC.ask;
 
       var USDtoEUR = {
