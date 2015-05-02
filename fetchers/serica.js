@@ -29,7 +29,7 @@ module.exports = function(apiParams, source, models) {
             results.push(USDtoEUR);
 
             cb(err, null, results); // callback with request format
-          })
+          });
         });
       });
     }
@@ -74,6 +74,6 @@ module.exports = function(apiParams, source, models) {
       };
 
       cb(null, USDtoEUR);
-    })
+    });
   }
 };
