@@ -101,8 +101,12 @@ function processResult(result) {
     saveResult(result);
 
     if ( isNonBTCToUSD(result) ){
-      convertToBTC(result, function (converted) {
-        saveResult(converted);
+      convertToBTC(result, function (err, converted) {
+        if (err) {
+          errbit.notify(err);
+        } else {
+          saveResult(converted);
+        }
       });
     }
   }
@@ -117,8 +121,12 @@ function isNonBTCToUSD(result){
 function convertToBTC(result, cb){
   models.data.getLatestPrices("USDtoBTC").complete(function (err, data) {
     if (err) {
-      return console.dir(err);
-    } 
+      return cb(err);
+    }
+
+    if (!data.length){
+      return cb(new Error('No USDtoBTC in past 12 hours'));
+    }
 
     var btcPrice = ( data[0].ask + data[0].bid ) / 2.0;
     
@@ -131,7 +139,7 @@ function convertToBTC(result, cb){
       "high": result.high / btcPrice
     };
 
-    cb(convertedData);
+    cb(null, convertedData);
   });
 }
 
