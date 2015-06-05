@@ -53,7 +53,7 @@
     "btce": {
       "url": "https://btc-e.com/api/2/btc_usd/ticker",
       "interval": 60000,
-      "active": true,
+      "active": false,
       "timeout": 30000
     },
     "lakebtc": {
