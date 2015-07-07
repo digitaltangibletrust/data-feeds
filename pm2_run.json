@@ -3,11 +3,11 @@
     "name": "data_feed_api",
     "script": "app.js",
     "cwd": "/var/www/data-feeds/current",
-    "exec_mode"  : "cluster_mode"
+    "exec_mode": "cluster_mode"
   }, {
     "name": "data_feed_puller",
     "script": "feeds.js",
     "cwd": "/var/www/data-feeds/current",
-    "exec_mode"  : "cluster_mode"
+    "exec_mode": "cluster_mode"
   }]
 }
