@@ -21,7 +21,7 @@
     "lodash": "~2.4.1",
     "request": "~2.38.0",
     "restify": "~2.8.1",
-    "config": "~1.0.0",
+    "config": "git+ssh://git@github.com:digitaltangibletrust/node-config.git",
     "gauss": "~0.2.12",
     "sequelize": "~1.7.9",
     "pg": "~3.4.0",
